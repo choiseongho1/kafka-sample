@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.4'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.github.davidmc24.gradle.plugin.avro' version '1.8.0' // ✅ 여기에 추가!
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://packages.confluent.io/maven/' // ✅ Confluent 전용 저장소
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // ✅ Kafka Streams (명시 버전 추천)
+    implementation 'org.apache.kafka:kafka-streams:3.5.1'
+
+    // ✅ Avro 관련
+    implementation 'io.confluent:kafka-avro-serializer:7.5.0'
+    implementation 'org.apache.avro:avro:1.11.1'
+
+    // ✅ Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // ✅ Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+avro {
+    createSetters = true
+    fieldVisibility = 'PUBLIC' // ✅ 이걸로 수정!
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
